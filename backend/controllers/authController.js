@@ -3,15 +3,19 @@ import User from "../models/userModel.js";
 import generateToken from "../libs/generateToken.js";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import Item from "../models/itemModel.js";
 
 export const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, mobilenumber } = req.body;
   try {
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !mobilenumber) {
       return res.status(400).json({ message: "All fields are required" });
     }
     if (!validator.isEmail(email)) {
       return res.status(400).json({ message: "Invalid email format" });
+    }
+    if(!validator.isMobilePhone(mobilenumber)){
+      return res.status(400).json({ message: "Invalid mobile number format" });
     }
     if (
       !validator.isStrongPassword(password, {
@@ -36,7 +40,7 @@ export const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({ name, email, password: hashedPassword });
+    const newUser = new User({ name, email,mobilenumber, password: hashedPassword });
     await newUser.save();
 
     const token = generateToken(newUser._id);
@@ -44,7 +48,7 @@ export const registerUser = async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
       token,
-      user: { id: newUser._id, name: newUser.name, email: newUser.email },
+      user: { id: newUser._id, name: newUser.name,mobilenumber: newUser.mobilenumber, email: newUser.email },
     });
   } catch (error) {
     console.error("Error registering user:", error);
@@ -84,3 +88,34 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const logoutUser = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  res.json({ message: "Logged out successfully" });
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    // req.user comes from protect middleware (contains decoded token)
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const items = await Item.find({ user: req.user.id });
+
+    res.status(200).json({
+      success: true,
+      user,
+      items,
+    });
+  } catch (error) {
+    console.error("Get profile error:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+

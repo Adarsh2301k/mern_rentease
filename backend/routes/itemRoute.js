@@ -1,6 +1,7 @@
 import express from 'express'
 import protect from '../middleware/authMiddleware.js';
 import parser from '../libs/multer.js';
+import { addItem,getItems,getItemsByCategory,updateItem,deleteItem } from '../controllers/itemController.js';
 
 const router=express.Router();
 
