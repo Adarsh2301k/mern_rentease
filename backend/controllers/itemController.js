@@ -1,17 +1,31 @@
 import Item from "../models/itemModel.js";
 import { CATEGORIES } from "../others/categories.js";
 
-// Add new item with image and category validation
+// Add new item with image, category, and type validation
 export const addItem = async (req, res) => {
   try {
-    const { name, description, price, category } = req.body;
+    const { name, description, price, category, type } = req.body;
     if (!name || !price || !category) {
-      return res.status(400).json({ message: "Name, price and category are required" });
+      return res
+        .status(400)
+        .json({ message: "Name, price and category are required" });
     }
 
+    // Validate category
     const categoryLower = category.toLowerCase();
     if (!CATEGORIES.includes(categoryLower)) {
       return res.status(400).json({ message: "Invalid category selected" });
+    }
+
+    // ✅ Validate type
+    const allowedTypes = ["new", "second-hand", "rental"];
+    let finalType = "second-hand"; // default
+    if (type) {
+      const typeLower = type.toLowerCase();
+      if (!allowedTypes.includes(typeLower)) {
+        return res.status(400).json({ message: "Invalid type selected" });
+      }
+      finalType = typeLower;
     }
 
     const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
@@ -22,10 +36,13 @@ export const addItem = async (req, res) => {
       price,
       category: categoryLower,
       image: imageUrl,
-      user: req.user._id, // owner
+      user: req.user._id,
+      type: finalType, // ✅ store type
     });
 
-    res.status(201).json({ message: "Item added successfully", item: newItem });
+    res
+      .status(201)
+      .json({ message: "Item added successfully", item: newItem });
   } catch (error) {
     console.error("Error adding item:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -40,7 +57,9 @@ export const updateItem = async (req, res) => {
     if (!item) return res.status(404).json({ message: "Item not found" });
 
     if (item.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "You can only update your own items" });
+      return res
+        .status(403)
+        .json({ message: "You can only update your own items" });
     }
 
     if (req.body.category) {
@@ -51,8 +70,18 @@ export const updateItem = async (req, res) => {
       item.category = categoryLower;
     }
 
-    if (req.file) item.image = req.file.path; // update image if uploaded
-    Object.assign(item, req.body); // update other fields
+    // ✅ Handle type update
+    if (req.body.type) {
+      const allowedTypes = ["new", "second-hand", "rental"];
+      const typeLower = req.body.type.toLowerCase();
+      if (!allowedTypes.includes(typeLower)) {
+        return res.status(400).json({ message: "Invalid type selected" });
+      }
+      item.type = typeLower;
+    }
+
+    if (req.file) item.image = req.file.path;
+    Object.assign(item, req.body);
     await item.save();
 
     res.status(200).json({ message: "Item updated successfully", item });
@@ -61,6 +90,7 @@ export const updateItem = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Delete item (only owner)
 export const deleteItem = async (req, res) => {
@@ -82,9 +112,28 @@ export const deleteItem = async (req, res) => {
 };
 
 // Get all items (public)
+// Get all items (public, with optional filters)
 export const getItems = async (req, res) => {
   try {
-    const items = await Item.find().populate("user", "name email");
+    const { category, type } = req.query;
+
+    // Build filter object dynamically
+    const filter = {};
+
+    if (category) {
+      filter.category = category.toLowerCase();
+    }
+
+    if (type) {
+      const allowedTypes = ["new", "second-hand", "rental"];
+      const typeLower = type.toLowerCase();
+      if (!allowedTypes.includes(typeLower)) {
+        return res.status(400).json({ message: "Invalid type filter" });
+      }
+      filter.type = typeLower;
+    }
+
+    const items = await Item.find(filter).populate("user", "name email");
     res.status(200).json(items);
   } catch (error) {
     console.error("Error fetching items:", error);
@@ -92,26 +141,10 @@ export const getItems = async (req, res) => {
   }
 };
 
+
 // Get items by category (public)
-export const getItemsByCategory = async (req, res) => {
-  try {
-    const { category } = req.params;
-    const categoryLower = category.toLowerCase();
 
-    const items = await Item.find({ category: categoryLower }).populate("user", "name email");
 
-    if (items.length === 0) {
-      return res.status(404).json({ message: `No items found in category: ${category}` });
-    }
-
-    res.status(200).json(items);
-  } catch (error) {
-    console.error("Error fetching items by category:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-// Get all categories
 export const getCategories = (req, res) => {
   res.json(CATEGORIES);
 };

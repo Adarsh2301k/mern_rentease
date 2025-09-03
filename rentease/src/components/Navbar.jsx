@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // fake login state
+  const { isLoggedIn, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+
+    logout();
     setIsOpen(false);
+    navigate("/");
   };
 
   return (
@@ -28,10 +34,10 @@ function Navbar() {
           </Link>
 
           <Link
-            to="/contact"
+            to="/items"
             className="text-gray-700 hover:text-blue-600 font-medium"
           >
-            Contact
+            All items
           </Link>
           <Link
             to="/about"
@@ -59,12 +65,7 @@ function Navbar() {
                 >
                   My Profile
                 </Link>
-                <Link
-                  to="/update-profile"
-                  className="block px-4 py-2 text-gray-700 hover:bg-blue-50"
-                >
-                  Update Profile
-                </Link>
+                
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600"

@@ -24,8 +24,8 @@ function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/contact" className="hover:text-blue-600">
-                Contact
+              <Link to="/register" className="hover:text-blue-600">
+                Register now
               </Link>
             </li>
             <li>
