@@ -116,6 +116,8 @@ export const deleteItem = async (req, res) => {
 export const getItems = async (req, res) => {
   try {
     const { category, type } = req.query;
+    console.log("Incoming query:", req.query);
+
 
     // Build filter object dynamically
     const filter = {};
@@ -126,7 +128,8 @@ export const getItems = async (req, res) => {
 
     if (type) {
       const allowedTypes = ["new", "second-hand", "rental"];
-      const typeLower = type.toLowerCase();
+      const typeLower = decodeURIComponent(type).toLowerCase();
+
       if (!allowedTypes.includes(typeLower)) {
         return res.status(400).json({ message: "Invalid type filter" });
       }

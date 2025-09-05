@@ -26,7 +26,7 @@ function HeroSection({ isLoggedIn }) {
                 Browse Items
               </Link>
               <Link
-                to="/add-item"
+                to="/addItem"
                 className="bg-transparent border border-blue-600 text-blue-600 px-6 py-3 rounded-md font-medium hover:bg-blue-600 hover:text-white transition"
               >
                 Post Your Item

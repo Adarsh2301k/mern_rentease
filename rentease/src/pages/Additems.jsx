@@ -1,10 +1,15 @@
-import { useState } from "react";
-import axios from "axios";
+import { useState, useContext } from "react";
+import { addItem } from "../api";  // ✅ use API helper
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const CATEGORIES = ["electronics", "books", "furniture", "clothing", "other"];
 const TYPES = ["new", "second-hand", "rental"];
 
 export default function AddItem() {
+  const { token } = useContext(AuthContext);   // ✅ need token in context
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -15,6 +20,7 @@ export default function AddItem() {
   });
 
   const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false); // prevent multiple submits
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -27,15 +33,18 @@ export default function AddItem() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+
     try {
       const data = new FormData();
       for (let key in formData) {
         data.append(key, formData[key]);
       }
-      const res = await axios.post("/api/items", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setMessage("Item added successfully!");
+
+      await addItem(data, token); // ✅ API helper with token
+
+      setMessage("✅ Item added successfully!");
       setFormData({
         name: "",
         description: "",
@@ -44,9 +53,13 @@ export default function AddItem() {
         type: "second-hand",
         image: null,
       });
+
+      navigate("/profile"); // ✅ redirect after success
     } catch (err) {
-      setMessage("Failed to add item. Try again.");
-      console.error(err);
+      setMessage("❌ Failed to add item. Try again.");
+      console.error(err.response?.data || err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -55,7 +68,7 @@ export default function AddItem() {
       <h2 className="text-2xl font-bold mb-6 text-center">Add a New Item</h2>
       {message && <p className="mb-4 text-center text-blue-600">{message}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/** Name */}
+        {/* Name */}
         <div className="flex flex-col">
           <label className="mb-1 font-medium text-sm">Name*</label>
           <input
@@ -68,7 +81,7 @@ export default function AddItem() {
           />
         </div>
 
-        {/** Description */}
+        {/* Description */}
         <div className="flex flex-col">
           <label className="mb-1 font-medium text-sm">Description</label>
           <textarea
@@ -80,7 +93,7 @@ export default function AddItem() {
           />
         </div>
 
-        {/** Price */}
+        {/* Price */}
         <div className="flex flex-col">
           <label className="mb-1 font-medium text-sm">Price*</label>
           <input
@@ -93,24 +106,25 @@ export default function AddItem() {
           />
         </div>
 
-        {/** Category & Type in a row */}
+        {/* Category & Type */}
         <div className="flex gap-4">
           <div className="flex-1 flex flex-col">
             <label className="mb-1 font-medium text-sm">Category*</label>
             <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
-              required
-            >
-              <option value="">Select category</option>
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </option>
-              ))}
-            </select>
+  name="category"
+  value={formData.category}
+  onChange={handleChange}
+  className="w-full p-2 border rounded"
+  required
+>
+  <option value="">Select Category</option>
+  {["furniture", "electronics", "books", "clothing", "stationery", "other"].map((cat) => (
+    <option key={cat} value={cat}>
+      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+    </option>
+  ))}
+</select>
+
           </div>
 
           <div className="flex-1 flex flex-col">
@@ -130,7 +144,7 @@ export default function AddItem() {
           </div>
         </div>
 
-        {/** Image */}
+        {/* Image */}
         <div className="flex flex-col">
           <label className="mb-1 font-medium text-sm">Image</label>
           <input
@@ -145,12 +159,13 @@ export default function AddItem() {
           )}
         </div>
 
-        {/** Submit */}
+        {/* Submit */}
         <button
           type="submit"
+          disabled={submitting}
           className="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700 transition-colors text-sm"
         >
-          Add Item
+          {submitting ? "Adding..." : "Add Item"}
         </button>
       </form>
     </div>

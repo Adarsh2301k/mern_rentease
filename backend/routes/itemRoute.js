@@ -5,9 +5,9 @@ import { addItem, getItems, updateItem, deleteItem } from '../controllers/itemCo
 
 const router = express.Router();
 
-router.post('/add-item', protect, parser.single("image"), addItem);
-router.get('/get-items', getItems); // ✅ public, supports category & type
-router.put('/update-item/:id', protect, parser.single("image"), updateItem);
-router.delete('/delete-item/:id', protect, deleteItem);
+router.post('/addItem', protect, parser.single("image"), addItem);
+router.get('/getItem', getItems); // ✅ public, supports category & type
+router.put('/updateItem/:id', protect, parser.single("image"), updateItem);
+router.delete('/deleteItem/:id', protect, deleteItem);
 
 export default router;

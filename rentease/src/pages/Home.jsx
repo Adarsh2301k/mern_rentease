@@ -7,9 +7,9 @@ import { AuthContext } from "../context/AuthContext";
 const Home = () => {
   const { isLoggedIn } = useContext(AuthContext);
   const categories = [
-  { icon: "🆕", title: "New Items", description: "Freshly available products for students.", link: "/items?type=New" },
-  { icon: "♻️", title: "Second-Hand", description: "Affordable pre-loved items from other students.", link: "/items?type=Second-Hand" },
-  { icon: "🏠", title: "Rental", description: "Rent items for short-term use at low cost.", link: "/items?type=Rental" },
+  { icon: "🆕", title: "New Items", description: "Freshly available products for students.", link: "/items?type=new" },
+  { icon: "♻️", title: "Second-Hand", description: "Affordable pre-loved items from other students.", link: "/items?type=second-hand" },
+  { icon: "🏠", title: "Rental", description: "Rent items for short-term use at low cost.", link: "/items?type=rental" },
 ];
 
 

@@ -1,103 +1,126 @@
 // src/pages/Items.jsx
-import { useState } from "react";
-import { FiX, FiFilter } from "react-icons/fi";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FiFilter, FiX } from "react-icons/fi";
+import { useSearchParams } from "react-router-dom";
+import { getItems } from "../api";
 
+const CATEGORY_OPTIONS = [
+  { key: "all", label: "All" },
+  { key: "furniture", label: "Furniture" },
+  { key: "electronics", label: "Electronics" },
+  { key: "books", label: "Books" },
+  { key: "clothing", label: "Clothing" },
+  { key: "stationery", label: "Stationery" },
+  { key: "other", label: "Other" },
+];
 
-const Items = () => {
-  const categories = ["All", "Furniture", "Electronics", "Books"];
-  const types = ["New", "Second-Hand", "Rental"];
+const TYPE_OPTIONS = [
+  { key: "all", label: "All" },
+  { key: "new", label: "New" },
+  { key: "second-hand", label: "Second Hand" },
+  { key: "rental", label: "Rental" },
+];
 
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [activeType, setActiveType] = useState("All");
+const prettyType = (t) =>
+  t === "second-hand"
+    ? "Second Hand"
+    : t
+    ? t.charAt(0).toUpperCase() + t.slice(1)
+    : "";
+
+export default function Items() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const location = useLocation();
-const queryParams = new URLSearchParams(location.search);
-const typeParam = queryParams.get("type");
+  const [searchParams, setSearchParams] = useSearchParams();
 
-useEffect(() => {
-  if (typeParam) {
-    setActiveType(typeParam); // e.g., "Rental"
-  }
-}, [typeParam]);
+  const activeCategory = searchParams.get("category")?.toLowerCase() || "all";
+  const activeType = searchParams.get("type")?.toLowerCase() || "all";
 
-  
+  useEffect(() => {
+    const fetchItems = async () => {
+      setLoading(true);
+      try {
+        const params = {};
+        if (activeCategory !== "all") params.category = activeCategory;
+        if (activeType !== "all") params.type = activeType;
 
-  // Fake items (later from backend)
-  const items = [
-    {
-      id: 1,
-      title: "Laptop",
-      category: "Electronics",
-      description: "Lightly used laptop in excellent condition.",
-      price: "$500",
-      type: "Second-Hand",
-      image: "https://via.placeholder.com/300x200",
-    },
-    {
-      id: 2,
-      title: "Bike Rental",
-      category: "Vehicles",
-      description: "Affordable bike rental for daily use.",
-      price: "$15/day",
-      type: "Rental",
-      image: "https://via.placeholder.com/300x200",
-    },
-    {
-      id: 3,
-      title: "Study Desk",
-      category: "Furniture",
-      description: "Brand new wooden desk, perfect for students.",
-      price: "$120",
-      type: "New",
-      image: "https://via.placeholder.com/300x200",
-    },
-  ];
+        console.log("Fetching items with params:", params);
+        const { data } = await getItems(params);
+        setItems(data);
+      } catch (err) {
+        console.error(
+          "Error fetching items:",
+          err.response?.data || err.message
+        );
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, [activeCategory, activeType]);
+
+  if (loading) return <p className="text-center mt-20">Loading items...</p>;
+
+  const badgeClass = (t) =>
+    (
+      {
+        new: "bg-green-100 text-green-700",
+        "second-hand": "bg-yellow-100 text-yellow-700",
+        rental: "bg-purple-100 text-purple-700",
+      }[t] || "bg-gray-100 text-gray-700"
+    );
+
+  const updateFilter = (category, type) => {
+    const params = {};
+    if (category && category !== "all") params.category = category;
+    if (type && type !== "all") params.type = type;
+    setSearchParams(params);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50 pt-20 px-6">
-      {/* Sidebar for desktop */}
+      {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md rounded-2xl p-6 hidden md:block">
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Filter by</h3>
 
-        {/* Categories */}
         <div className="mb-6">
           <h4 className="font-medium text-gray-600 mb-2">Category</h4>
           <ul className="space-y-2">
-            {categories.map((cat) => (
-              <li key={cat}>
+            {CATEGORY_OPTIONS.map(({ key, label }) => (
+              <li key={key}>
                 <button
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => updateFilter(key, activeType)}
                   className={`w-full text-left px-3 py-2 rounded-lg ${
-                    activeCategory === cat
+                    activeCategory === key
                       ? "bg-blue-600 text-white"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
-                  {cat}
+                  {label}
                 </button>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Types */}
         <div>
           <h4 className="font-medium text-gray-600 mb-2">Type</h4>
           <ul className="space-y-2">
-            {["All", ...types].map((t) => (
-              <li key={t}>
+            {TYPE_OPTIONS.map(({ key, label }) => (
+              <li key={key}>
                 <button
-                  onClick={() => setActiveType(t)}
+                  onClick={() => updateFilter(activeCategory, key)}
                   className={`w-full text-left px-3 py-2 rounded-lg ${
-                    activeType === t
+                    activeType === key
                       ? "bg-blue-600 text-white"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
-                  {t}
+                  {label}
                 </button>
               </li>
             ))}
@@ -105,55 +128,50 @@ useEffect(() => {
         </div>
       </aside>
 
-      {/* Main Section */}
+      {/* Main */}
       <main className="flex-1 md:ml-6">
-        {/* Mobile Filter Button */}
         <div className="flex justify-between items-center mb-6 md:hidden">
           <h2 className="text-2xl font-bold text-gray-800">Items</h2>
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100"
+            className="flex items-center gap-2 px-4 py-2 border rounded-lg"
           >
             <FiFilter /> Filters
           </button>
         </div>
 
-        {/* Items Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items
-  .filter((item) => activeType === "All" || item.type === activeType)
-  .filter((item) => activeCategory === "All" || item.category === activeCategory)
-  .map((item) => (
+          {items.map((item) => (
             <div
-              key={item.id}
-              className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition p-4"
+              key={item._id}
+              className="bg-white border rounded-xl shadow-sm p-4"
             >
               <img
-                src={item.image}
-                alt={item.title}
+                src={
+                  item.image ||
+                  "https://via.placeholder.com/400x240.png?text=No+Image"
+                }
+                alt={item.name}
                 className="w-full h-40 object-cover rounded-md mb-4"
               />
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-lg font-bold text-blue-600">
-                  {item.title}
-                </h4>
+                <h4 className="text-lg font-bold text-blue-600">{item.name}</h4>
                 <span
-                  className={`text-xs px-2 py-1 rounded-full ${
-                    item.type === "New"
-                      ? "bg-green-100 text-green-700"
-                      : item.type === "Second-Hand"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-purple-100 text-purple-700"
-                  }`}
+                  className={`text-xs px-2 py-1 rounded-full ${badgeClass(
+                    item.type
+                  )}`}
                 >
-                  {item.type}
+                  {prettyType(item.type)}
                 </span>
               </div>
-              <p className="text-gray-600 text-sm">{item.category}</p>
+              <p className="text-gray-600 text-sm">
+                {item.category?.charAt(0).toUpperCase() +
+                  item.category?.slice(1)}
+              </p>
               <p className="text-gray-700 text-sm mt-2 line-clamp-2">
                 {item.description}
               </p>
-              <p className="text-gray-900 font-semibold mt-3">{item.price}</p>
+              <p className="text-gray-900 font-semibold mt-3">₹{item.price}</p>
             </div>
           ))}
         </div>
@@ -162,13 +180,10 @@ useEffect(() => {
       {/* Mobile Drawer */}
       {isFilterOpen && (
         <div className="fixed inset-0 z-50 flex">
-          {/* Overlay */}
           <div
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsFilterOpen(false)}
-          ></div>
-
-          {/* Drawer Content */}
+          />
           <div className="relative w-72 bg-white shadow-lg p-6 z-50">
             <button
               onClick={() => setIsFilterOpen(false)}
@@ -176,47 +191,42 @@ useEffect(() => {
             >
               <FiX size={20} />
             </button>
-
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
               Filter by
             </h3>
-
-            {/* Categories */}
             <div className="mb-6">
               <h4 className="font-medium text-gray-600 mb-2">Category</h4>
               <ul className="space-y-2">
-                {categories.map((cat) => (
-                  <li key={cat}>
+                {CATEGORY_OPTIONS.map(({ key, label }) => (
+                  <li key={key}>
                     <button
-                      onClick={() => setActiveCategory(cat)}
+                      onClick={() => updateFilter(key, activeType)}
                       className={`w-full text-left px-3 py-2 rounded-lg ${
-                        activeCategory === cat
+                        activeCategory === key
                           ? "bg-blue-600 text-white"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
-                      {cat}
+                      {label}
                     </button>
                   </li>
                 ))}
               </ul>
             </div>
-
-            {/* Types */}
             <div>
               <h4 className="font-medium text-gray-600 mb-2">Type</h4>
               <ul className="space-y-2">
-                {["All", ...types].map((t) => (
-                  <li key={t}>
+                {TYPE_OPTIONS.map(({ key, label }) => (
+                  <li key={key}>
                     <button
-                      onClick={() => setActiveType(t)}
+                      onClick={() => updateFilter(activeCategory, key)}
                       className={`w-full text-left px-3 py-2 rounded-lg ${
-                        activeType === t
+                        activeType === key
                           ? "bg-blue-600 text-white"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
-                      {t}
+                      {label}
                     </button>
                   </li>
                 ))}
@@ -227,6 +237,4 @@ useEffect(() => {
       )}
     </div>
   );
-};
-
-export default Items;
+}

@@ -17,6 +17,26 @@ export const updateProfile = (data, token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  export const logoutUser = () => API.post("/auth/logout");
+export const logoutUser = () => API.post("/auth/logout");
+
+// items endpoints
+
+export const addItem = (data, token) =>
+  API.post("/items/addItem", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const getItems = (filters = {}) =>
+  API.get("/items/getItem", { params: filters });
+
+export const updateItem = (id, data, token) =>
+  API.put(`/items/updateItem/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const deleteItem = (id, token) =>
+  API.delete(`/items/deleteItem/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
 export default API;

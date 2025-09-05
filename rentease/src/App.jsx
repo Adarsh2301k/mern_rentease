@@ -27,7 +27,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-          <Route path="/add-item" element={<PrivateRoute><AddItem /></PrivateRoute>} />
+          <Route path="/addItem" element={<PrivateRoute><AddItem /></PrivateRoute>} />
           <Route path="/product" element={<Product />} />
           <Route path="/updateProfile"  element={<PrivateRoute><UpdateProfile /></PrivateRoute>} />
         </Routes>

@@ -1,33 +1,35 @@
+// src/context/AuthContext.jsx
 import { createContext, useState, useEffect } from "react";
-import { logoutUser } from "../api"; // import logout API
+import { logoutUser } from "../api";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem("token") || null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) setIsLoggedIn(true);
-  }, []);
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  }, [token]);
 
   const login = (token) => {
-    localStorage.setItem("token", token);
-    setIsLoggedIn(true);
+    setToken(token);
   };
 
   const logout = async () => {
     try {
-      await logoutUser(); // hit backend logout (clears cookie)
+      await logoutUser();
     } catch (error) {
       console.error("Logout failed:", error);
     }
-    localStorage.removeItem("token"); // clear frontend storage
-    setIsLoggedIn(false);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ token, isLoggedIn: !!token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
