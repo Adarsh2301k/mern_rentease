@@ -151,3 +151,29 @@ export const getItems = async (req, res) => {
 export const getCategories = (req, res) => {
   res.json(CATEGORIES);
 };
+
+
+export const myItems = async (req, res) => {
+  try {
+    const items = await Item.find({ user: req.user.id }); 
+    res.json({ success: true, items });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+export const getItemById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await Item.findById(id).populate("user", "name email");
+
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    res.status(200).json({ success: true, item });
+  } catch (error) {
+    console.error("Error fetching item:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

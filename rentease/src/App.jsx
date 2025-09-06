@@ -12,6 +12,7 @@ import AddItem from "./pages/Additems"
 import Product from "./pages/Product"
 import UpdateProfile from "./pages/UpdateProfile"
 import PrivateRoute from "./lib/PrivateRouting"
+import UpdateItem from "./pages/UpdateItem"
 
 
 
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/addItem" element={<PrivateRoute><AddItem /></PrivateRoute>} />
           <Route path="/product" element={<Product />} />
           <Route path="/updateProfile"  element={<PrivateRoute><UpdateProfile /></PrivateRoute>} />
+          <Route path="/updateItem/:id"  element={<PrivateRoute><UpdateItem /></PrivateRoute>} />
         </Routes>
       <Footer/>
     </div>

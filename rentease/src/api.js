@@ -39,4 +39,15 @@ export const deleteItem = (id, token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  export const getMyItems = (token) =>
+  API.get("/items/myItems", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  export const getItemById = (id, token) =>
+  API.get(`/items/getItem/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+
 export default API;
