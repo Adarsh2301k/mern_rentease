@@ -11,7 +11,8 @@ const UpdateProfile = () => {
     name: "",
     email: "",
     mobileNumber: "",
-    avatar: "",
+    address: "",   // ✅ new
+    avatar: null,  // ✅ file upload
   });
 
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,8 @@ const UpdateProfile = () => {
           name: user.name || "",
           email: user.email || "",
           mobileNumber: user.mobileNumber || "",
-          avatar: user.avatar || "",
+          address: user.address || "",     // ✅ prefill if exists
+          avatar: user.avatar || "",       // ✅ URL from backend
         });
       } catch (err) {
         console.error(err);
@@ -44,6 +46,10 @@ const UpdateProfile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, avatar: e.target.files[0] });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -51,7 +57,17 @@ const UpdateProfile = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await updateProfile(formData, token);
+
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("email", formData.email);
+      data.append("mobileNumber", formData.mobileNumber);
+      data.append("address", formData.address);
+      if (formData.avatar instanceof File) {
+        data.append("avatar", formData.avatar);
+      }
+
+      await updateProfile(data, token);
       navigate("/profile");
     } catch (err) {
       console.error(err);
@@ -76,18 +92,26 @@ const UpdateProfile = () => {
             <div className="relative w-32 h-32">
               <img
                 src={
-                  formData.avatar ||
-                  "https://via.placeholder.com/150?text=Profile"
+                  formData.avatar instanceof File
+                    ? URL.createObjectURL(formData.avatar) // preview new
+                    : formData.avatar || "https://via.placeholder.com/150?text=Profile"
                 }
                 alt="Profile Avatar"
                 className="w-32 h-32 rounded-full object-cover border"
               />
-              <button
-                type="button"
-                className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-700"
+              <label
+                htmlFor="avatarUpload"
+                className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full shadow hover:bg-blue-700 cursor-pointer"
               >
                 <Camera size={18} />
-              </button>
+              </label>
+              <input
+                id="avatarUpload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
             </div>
             <p className="text-sm text-gray-500 mt-2">Update photo</p>
           </div>
@@ -127,6 +151,17 @@ const UpdateProfile = () => {
                 type="text"
                 name="mobileNumber"
                 value={formData.mobileNumber}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border rounded-lg mt-1 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-400 transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium">Address</label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-lg mt-1 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-400 transition"
               />

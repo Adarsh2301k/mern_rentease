@@ -121,27 +121,41 @@ export const getProfile = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { name, mobileNumber, email, password } = req.body;
+    const { name, mobileNumber, email, password, address } = req.body;
     const user = await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update fields if provided
+    // Update fields
     if (name) user.name = name;
     if (mobileNumber) user.mobileNumber = mobileNumber;
     if (email) user.email = email;
+    if (address) user.address = address;
+
     if (password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
+    }
+
+    // Avatar comes from multer (req.file.path → Cloudinary URL)
+    if (req.file && req.file.path) {
+      user.avatar = req.file.path;
     }
 
     await user.save();
 
     res.status(200).json({
       message: "Profile updated successfully",
-      user: { id: user._id, name: user.name, mobileNumber: user.mobileNumber, email: user.email },
+      user: {
+        id: user._id,
+        name: user.name,
+        mobileNumber: user.mobileNumber,
+        email: user.email,
+        address: user.address,
+        avatar: user.avatar,
+      },
     });
   } catch (error) {
     console.error("Error updating profile:", error);

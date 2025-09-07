@@ -17,6 +17,14 @@ const userSchema= new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    avatar: {
+      type: String, // URL from Cloudinary
+      default: "",  // keep empty until uploaded
+    },
+    address: {
+      type: String,
+      default: "",  // optional
     }
 },{timestamps:true})
 

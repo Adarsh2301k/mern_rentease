@@ -14,7 +14,10 @@ export const getProfile = (token) =>
 
 export const updateProfile = (data, token) =>
   API.put("/auth/updateProfile", data, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data", // 👈 important for file upload
+    },
   });
 
 export const logoutUser = () => API.post("/auth/logout");
