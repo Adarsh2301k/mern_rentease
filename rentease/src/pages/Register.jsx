@@ -1,10 +1,13 @@
 // src/pages/Register.jsx
-import { useState } from "react";
-import { Link ,useNavigate} from "react-router-dom";
-import { registerUser } from "../api.js";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser, loginUser } from "../api.js";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const Register = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -16,19 +19,30 @@ const Register = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await registerUser(form);
-    console.log("Registered successfully:", res.data);
-    alert("Registered successfully! ");
-    navigate("/"); // redirect to Login page
-  } catch (err) {
-    console.error("Registration failed:", err.response?.data?.message || err.message);
-    alert(err.response?.data?.message || "Registration failed");
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Step 1: Register user
+      await registerUser(form);
 
+      // Step 2: Auto-login with same credentials
+      const res = await loginUser({
+        email: form.email,
+        password: form.password,
+      });
+
+      // Step 3: Save token and update AuthContext
+      const token = res.data.token;
+      login(token); // update context state
+      localStorage.setItem("token", token);
+
+      alert("Registered & logged in successfully!");
+      navigate("/"); // go directly to home
+    } catch (err) {
+      console.error("Registration/Login failed:", err.response?.data?.message || err.message);
+      alert(err.response?.data?.message || "Registration failed");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4 pt-20">
