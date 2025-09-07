@@ -9,10 +9,12 @@ import Footer from "./components/Footer"
 import Aboutus from "./pages/Aboutus"
 import Profile from "./pages/Profile"
 import AddItem from "./pages/Additems"
-import Product from "./pages/Product"
+// import Product from "./pages/Product"
 import UpdateProfile from "./pages/UpdateProfile"
 import PrivateRoute from "./lib/PrivateRouting"
 import UpdateItem from "./pages/UpdateItem"
+import ItemDetails from "./pages/ItemDetails"
+
 
 
 
@@ -29,7 +31,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/addItem" element={<PrivateRoute><AddItem /></PrivateRoute>} />
-          <Route path="/product" element={<Product />} />
+          <Route path="/itemdetails/:id" element={<ItemDetails />} />
           <Route path="/updateProfile"  element={<PrivateRoute><UpdateProfile /></PrivateRoute>} />
           <Route path="/updateItem/:id"  element={<PrivateRoute><UpdateItem /></PrivateRoute>} />
         </Routes>

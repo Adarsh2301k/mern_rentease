@@ -1,7 +1,7 @@
 // src/pages/Items.jsx
 import { useEffect, useState } from "react";
 import { FiFilter, FiX } from "react-icons/fi";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { getItems } from "../api";
 
 const CATEGORY_OPTIONS = [
@@ -34,6 +34,7 @@ export default function Items() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const activeCategory = searchParams.get("category")?.toLowerCase() || "all";
   const activeType = searchParams.get("type")?.toLowerCase() || "all";
@@ -129,53 +130,60 @@ export default function Items() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 md:ml-6">
-        <div className="flex justify-between items-center mb-6 md:hidden">
-          <h2 className="text-2xl font-bold text-gray-800">Items</h2>
-          <button
-            onClick={() => setIsFilterOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 border rounded-lg"
-          >
-            <FiFilter /> Filters
-          </button>
-        </div>
+     <main className="flex-1 md:ml-6">
+  <div className="flex justify-between items-center mb-6 md:hidden">
+    <h2 className="text-2xl font-bold text-gray-800">Items</h2>
+    <button
+      onClick={() => setIsFilterOpen(true)}
+      className="flex items-center gap-2 px-4 py-2 border rounded-lg"
+    >
+      <FiFilter /> Filters
+    </button>
+  </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item) => (
-            <div
-              key={item._id}
-              className="bg-white border rounded-xl shadow-sm p-4"
+  {items.length === 0 ? (
+    <p className="text-center text-gray-500 mt-20 text-lg">
+      Currently not available
+    </p>
+  ) : (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {items.map((item) => (
+        <div
+          key={item._id}
+          onClick={() => navigate(`/itemdetails/${item._id}`)}
+          className="bg-white border rounded-xl shadow-sm p-4 cursor-pointer hover:shadow-md transition"
+        >
+          <img
+            src={
+              item.image ||
+              "https://via.placeholder.com/400x240.png?text=No+Image"
+            }
+            alt={item.name}
+            className="w-full h-40 object-cover rounded-md mb-4"
+          />
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-lg font-bold text-blue-600">{item.name}</h4>
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${badgeClass(
+                item.type
+              )}`}
             >
-              <img
-                src={
-                  item.image ||
-                  "https://via.placeholder.com/400x240.png?text=No+Image"
-                }
-                alt={item.name}
-                className="w-full h-40 object-cover rounded-md mb-4"
-              />
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-lg font-bold text-blue-600">{item.name}</h4>
-                <span
-                  className={`text-xs px-2 py-1 rounded-full ${badgeClass(
-                    item.type
-                  )}`}
-                >
-                  {prettyType(item.type)}
-                </span>
-              </div>
-              <p className="text-gray-600 text-sm">
-                {item.category?.charAt(0).toUpperCase() +
-                  item.category?.slice(1)}
-              </p>
-              <p className="text-gray-700 text-sm mt-2 line-clamp-2">
-                {item.description}
-              </p>
-              <p className="text-gray-900 font-semibold mt-3">₹{item.price}</p>
-            </div>
-          ))}
+              {prettyType(item.type)}
+            </span>
+          </div>
+          <p className="text-gray-600 text-sm">
+            {item.category?.charAt(0).toUpperCase() + item.category?.slice(1)}
+          </p>
+          <p className="text-gray-700 text-sm mt-2 line-clamp-2">
+            {item.description}
+          </p>
+          <p className="text-gray-900 font-semibold mt-3">₹{item.price}</p>
         </div>
-      </main>
+      ))}
+    </div>
+  )}
+</main>
+
 
       {/* Mobile Drawer */}
       {isFilterOpen && (
