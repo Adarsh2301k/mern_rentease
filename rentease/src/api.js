@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:4000/api" || "https://mern-rentease.onrender.com", // backend URL
+  baseURL: "http://localhost:4000/api" || "https://mern-rentease-1.onrender.com", // backend URL
 });
 
 // Auth endpoints
