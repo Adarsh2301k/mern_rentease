@@ -3,5 +3,6 @@ export const CATEGORIES = [
   "electronics",
   "stationery",
   "clothing",
+  "books",
   "other"
 ];

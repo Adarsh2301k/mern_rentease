@@ -53,4 +53,39 @@ export const deleteItem = (id, token) =>
   });
 
 
+
+
+
+  // cart endpoints
+export const addToCartAPI = (itemId, quantity = 1, token) =>
+  API.post(
+    "/cart/add",
+    { itemId, quantity },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+export const getCartAPI = (token) =>
+  API.get("/cart", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updateCartItemAPI = (itemId, quantity, token) =>
+  API.put(
+    `/cart/update/${itemId}`,
+    { quantity },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+export const removeFromCartAPI = (itemId, token) =>
+  API.delete(`/cart/remove/${itemId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const clearCartAPI = (token) =>
+  API.delete("/cart/clear", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+
+
 export default API;

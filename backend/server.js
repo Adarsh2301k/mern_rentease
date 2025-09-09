@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import authRoute from './routes/authRoute.js'
 import itemRoute from './routes/itemRoute.js'
+import cartRoute from './routes/cartRoute.js'
 
 
 dotenv.config();
@@ -17,7 +18,7 @@ connectDB();
 
 app.use("/api/auth", authRoute);
 app.use("/api/items", itemRoute);
-
+app.use("/api/cart", cartRoute);
 const PORT=process.env.PORT || 4000;
 
 app.listen(PORT,()=>{

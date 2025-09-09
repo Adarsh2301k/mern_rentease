@@ -3,7 +3,7 @@ import { addItem } from "../api";  // ✅ use API helper
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const CATEGORIES = ["electronics", "books", "furniture", "clothing", "other"];
+const CATEGORIES = ["electronics", "books", "furniture","stationery", "clothing", "other"];
 const TYPES = ["new", "second-hand", "rental"];
 
 export default function AddItem() {

@@ -39,7 +39,13 @@ function Navbar() {
           >
             All items
           </Link>
+          
           <Link
+            to="/cart"
+            className="text-gray-700 hover:text-blue-600 font-medium"
+          >
+            View Cart
+          </Link><Link
             to="/about"
             className="text-gray-700 hover:text-blue-600 font-medium"
           >
@@ -112,11 +118,11 @@ function Navbar() {
             Home
           </Link>
           <Link
-            to="/contact"
+            to="/items"
             className="block text-gray-700 hover:text-blue-600 font-medium"
             onClick={() => setIsOpen(false)}
           >
-            Contact
+            All items
           </Link>
           <Link
             to="/about"
@@ -153,7 +159,7 @@ function Navbar() {
                 My Profile
               </Link>
               <Link
-                to="/update-profile"
+                to="/updateProfile"
                 className="block text-gray-700 hover:text-blue-600 font-medium"
                 onClick={() => setIsOpen(false)}
               >

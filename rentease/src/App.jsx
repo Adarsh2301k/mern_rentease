@@ -14,6 +14,8 @@ import UpdateProfile from "./pages/UpdateProfile"
 import PrivateRoute from "./lib/PrivateRouting"
 import UpdateItem from "./pages/UpdateItem"
 import ItemDetails from "./pages/ItemDetails"
+import Cart from "./pages/cart/Addcart"
+import Checkout from "./pages/cart/Checkout"
 
 
 
@@ -32,6 +34,8 @@ export default function App() {
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           <Route path="/addItem" element={<PrivateRoute><AddItem /></PrivateRoute>} />
           <Route path="/itemdetails/:id" element={<ItemDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/cart/checkout" element={<Checkout />} />
           <Route path="/updateProfile"  element={<PrivateRoute><UpdateProfile /></PrivateRoute>} />
           <Route path="/updateItem/:id"  element={<PrivateRoute><UpdateItem /></PrivateRoute>} />
         </Routes>

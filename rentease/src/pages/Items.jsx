@@ -133,12 +133,20 @@ export default function Items() {
      <main className="flex-1 md:ml-6">
   <div className="flex justify-between items-center mb-6 md:hidden">
     <h2 className="text-2xl font-bold text-gray-800">Items</h2>
+     <div className="flex items-center gap-3">
+    <button
+        onClick={() => navigate("/cart")}
+        className="flex items-center gap-2 px-4 py-2 border rounded-lg"
+      >
+        🛒 Cart
+      </button>
+    
     <button
       onClick={() => setIsFilterOpen(true)}
       className="flex items-center gap-2 px-4 py-2 border rounded-lg"
     >
       <FiFilter /> Filters
-    </button>
+    </button></div>
   </div>
 
   {items.length === 0 ? (
@@ -164,7 +172,7 @@ export default function Items() {
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-lg font-bold text-blue-600">{item.name}</h4>
             <span
-              className={`text-xs px-2 py-1 rounded-full ${badgeClass(
+              className={`text-xs text-center px-2 py-1 rounded-full ${badgeClass(
                 item.type
               )}`}
             >
@@ -199,6 +207,7 @@ export default function Items() {
             >
               <FiX size={20} />
             </button>
+            
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
               Filter by
             </h3>

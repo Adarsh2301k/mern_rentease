@@ -116,7 +116,6 @@ export const deleteItem = async (req, res) => {
 export const getItems = async (req, res) => {
   try {
     const { category, type } = req.query;
-    console.log("Incoming query:", req.query);
 
 
     // Build filter object dynamically
@@ -147,7 +146,6 @@ export const getItems = async (req, res) => {
 
 // Get items by category (public)
 
-
 export const getCategories = (req, res) => {
   res.json(CATEGORIES);
 };
@@ -165,7 +163,7 @@ export const myItems = async (req, res) => {
 export const getItemById = async (req, res) => {
   try {
     const { id } = req.params;
-    const item = await Item.findById(id).populate("user", "name email");
+    const item = await Item.findById(id).populate("user", "name email avatar");
 
     if (!item) {
       return res.status(404).json({ message: "Item not found" });

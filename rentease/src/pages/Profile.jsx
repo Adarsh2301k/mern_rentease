@@ -109,13 +109,14 @@ const Profile = () => {
                   alt={item.title}
                   className="w-full h-40 object-cover rounded-md mb-4"
                 />
-                <h4 className="text-lg font-bold text-blue-600">{item.title}</h4>
+                <h4 className="text-lg font-bold text-blue-600">{item.name}</h4>
                 <p className="text-gray-600 text-sm mb-1">
                   {item.category?.charAt(0).toUpperCase() +
                     item.category?.slice(1)}
                 </p>
+                
                 <p className="text-gray-700 text-sm mb-2">{item.description}</p>
-                <p className="text-gray-800 font-medium">{item.price}</p>
+                <p className="text-gray-800 font-medium">Rs{item.price}</p>
 
                 <button
                   onClick={() => navigate(`/updateItem/${item._id}`)}
