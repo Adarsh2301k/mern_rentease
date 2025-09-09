@@ -13,7 +13,7 @@ const app=express();
 
 app.use(express.json());
 
-app.use(cors({ origin: "https://rentease99.netlify.app/" || "https://localhost:5173", credentials: true }));
+app.use(cors({ origin: "https://rentease99.netlify.app/" , credentials: true }));
 connectDB();
 
 app.use("/api/auth", authRoute);
