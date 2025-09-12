@@ -46,6 +46,12 @@ function Navbar() {
           >
             ViewCart
           </Link>
+          <Link
+                to="/orders/myorders"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
+                MyOrders
+          </Link>
 
           {/* Profile Dropdown */}
           {isLoggedIn ? (
@@ -84,12 +90,7 @@ function Navbar() {
             </div>
           ) : (
             <>
-            <Link
-                to="/orders/myorders"
-                className="text-gray-700 hover:text-blue-600 font-medium"
-              >
-                MyOrders
-              </Link>
+            
                
                
               <Link
