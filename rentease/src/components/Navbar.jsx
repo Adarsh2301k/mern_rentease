@@ -50,12 +50,7 @@ function Navbar() {
           {/* Profile Dropdown */}
           {isLoggedIn ? (
             <div className="relative group">
-              <Link
-                to="/orders/myorders"
-                className="text-gray-700 hover:text-blue-600 font-medium"
-              >
-                MyOrders
-              </Link>
+              
               <button className="flex items-center text-gray-700 hover:text-blue-600 font-medium">
                 <FaUserCircle className="mr-2 text-xl" />
                 Profile
@@ -90,11 +85,11 @@ function Navbar() {
           ) : (
             <>
             <Link
-            to="/about"
-            className="text-gray-700 hover:text-blue-600 font-medium"
-          >
-            AboutUs
-          </Link>
+                to="/orders/myorders"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
+                MyOrders
+              </Link>
                
                
               <Link
