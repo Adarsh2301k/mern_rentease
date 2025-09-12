@@ -45,16 +45,17 @@ function Navbar() {
             className="text-gray-700 hover:text-blue-600 font-medium"
           >
             ViewCart
-          </Link><Link
-            to="/orders/myorders"
-            className="text-gray-700 hover:text-blue-600 font-medium"
-          >
-            MyOrders
           </Link>
 
           {/* Profile Dropdown */}
           {isLoggedIn ? (
             <div className="relative group">
+              <Link
+                to="/orders/myorders"
+                className="text-gray-700 hover:text-blue-600 font-medium"
+              >
+                MyOrders
+              </Link>
               <button className="flex items-center text-gray-700 hover:text-blue-600 font-medium">
                 <FaUserCircle className="mr-2 text-xl" />
                 Profile
@@ -88,6 +89,14 @@ function Navbar() {
             </div>
           ) : (
             <>
+            <Link
+            to="/about"
+            className="text-gray-700 hover:text-blue-600 font-medium"
+          >
+            AboutUs
+          </Link>
+               
+               
               <Link
                 to="/login"
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
