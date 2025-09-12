@@ -85,20 +85,21 @@ export default function Items() {
   return (
     <div className="flex min-h-screen bg-gray-50 pt-20 px-6">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md rounded-2xl p-6 hidden md:block">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Filter by</h3>
+     <aside className="w-64 sticky top-20 self-start overflow-y-auto bg-white shadow-md rounded-2xl p-6 hidden md:block">
 
-        <div className="mb-6">
+        <h3 className="text-sm font-semibold text-gray-700 mb-2">Filter by</h3>
+
+        <div className="mb-1">
           <h4 className="font-medium text-gray-600 mb-2">Category</h4>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {CATEGORY_OPTIONS.map(({ key, label }) => (
               <li key={key}>
                 <button
                   onClick={() => updateFilter(key, activeType)}
-                  className={`w-full text-left px-3 py-2 rounded-lg ${
+                  className={`w-full text-left text-sm px-3 py-2 rounded-lg ${
                     activeCategory === key
                       ? "bg-blue-600 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
+                      : "text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {label}
@@ -110,15 +111,15 @@ export default function Items() {
 
         <div>
           <h4 className="font-medium text-gray-600 mb-2">Type</h4>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {TYPE_OPTIONS.map(({ key, label }) => (
               <li key={key}>
                 <button
                   onClick={() => updateFilter(activeCategory, key)}
-                  className={`w-full text-left px-3 py-2 rounded-lg ${
+                  className={`w-full text-left text-sm px-3 py-2 rounded-lg ${
                     activeType === key
                       ? "bg-blue-600 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
+                      : "text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {label}
@@ -185,6 +186,9 @@ export default function Items() {
           <p className="text-gray-700 text-sm mt-2 line-clamp-2">
             {item.description}
           </p>
+          <p className="text-black-700 text-md  mt-2 line-clamp-2">
+            Available Quantity : {item.quantity}
+          </p>
           <p className="text-gray-900 font-semibold mt-3">₹{item.price}</p>
         </div>
       ))}
@@ -203,7 +207,7 @@ export default function Items() {
           <div className="relative w-72 bg-white shadow-lg p-6 z-50">
             <button
               onClick={() => setIsFilterOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-3 right-2 text-gray-500 hover:text-gray-700"
             >
               <FiX size={20} />
             </button>
@@ -211,9 +215,9 @@ export default function Items() {
             <h3 className="text-lg font-semibold text-gray-700 mb-4">
               Filter by
             </h3>
-            <div className="mb-6">
-              <h4 className="font-medium text-gray-600 mb-2">Category</h4>
-              <ul className="space-y-2">
+            <div className="mb-4">
+              <h4 className="font-medium text-gray-600 mb-1">Category</h4>
+              <ul className="space-y-1">
                 {CATEGORY_OPTIONS.map(({ key, label }) => (
                   <li key={key}>
                     <button
@@ -231,8 +235,8 @@ export default function Items() {
               </ul>
             </div>
             <div>
-              <h4 className="font-medium text-gray-600 mb-2">Type</h4>
-              <ul className="space-y-2">
+              <h4 className="font-medium text-gray-600 mb-1">Type</h4>
+              <ul className="space-y-1">
                 {TYPE_OPTIONS.map(({ key, label }) => (
                   <li key={key}>
                     <button

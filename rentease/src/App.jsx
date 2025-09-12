@@ -16,7 +16,10 @@ import UpdateItem from "./pages/UpdateItem"
 import ItemDetails from "./pages/ItemDetails"
 import Cart from "./pages/cart/Addcart"
 import Checkout from "./pages/cart/Checkout"
+import AdminPanel from "./pages/AdminPanel"
 
+import Seller from "./pages/cart/Seller"
+import Buyer from "./pages/cart/Buyer"
 
 
 
@@ -38,6 +41,12 @@ export default function App() {
           <Route path="/cart/checkout" element={<Checkout />} />
           <Route path="/updateProfile"  element={<PrivateRoute><UpdateProfile /></PrivateRoute>} />
           <Route path="/updateItem/:id"  element={<PrivateRoute><UpdateItem /></PrivateRoute>} />
+          <Route path="/profile/adminPanel"  element={<PrivateRoute><AdminPanel /></PrivateRoute>} />
+
+          <Route path="/orders/seller"  element={<PrivateRoute><Seller /></PrivateRoute>} />
+          <Route path="/orders/myorders"  element={<PrivateRoute><Buyer /></PrivateRoute>} />
+          <Route></Route>
+        
         </Routes>
       <Footer/>
     </div>

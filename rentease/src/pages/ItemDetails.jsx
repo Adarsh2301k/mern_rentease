@@ -19,15 +19,17 @@ export default function ItemDetails() {
     const fetchItemAndRecommendations = async () => {
       try {
         setLoading(true);
+
+        // ✅ Always fetch without token (public)
         const res = await getItemById(id);
         const fetchedItem = res.data.item;
         setItem(fetchedItem);
 
+        // ✅ fetch recommendations from same category/type
         const filters = {
           category: fetchedItem.category,
           type: fetchedItem.type,
         };
-
         const recRes = await getItems(filters);
         const items = recRes.data.filter((i) => i._id !== fetchedItem._id);
         setRecommendedItems(items);
@@ -53,10 +55,10 @@ export default function ItemDetails() {
     email: item?.user?.email || "Not available",
   };
 
-  // ✅ check login before adding to cart / buying
+  // ✅ Add to Cart / Buy Now logic
   const handleAddToCart = () => {
     if (!isLoggedIn) {
-      navigate("/login");
+      navigate("/login"); // guest → login first
       return;
     }
     addToCart(item);
@@ -65,7 +67,7 @@ export default function ItemDetails() {
 
   const handleBuyNow = () => {
     if (!isLoggedIn) {
-      navigate("/login");
+      navigate("/login"); // guest → login first
       return;
     }
     addToCart(item);
@@ -84,7 +86,7 @@ export default function ItemDetails() {
       </div>
 
       <div className="flex flex-col md:flex-row bg-white shadow-lg rounded-xl overflow-hidden gap-4">
-        {/* ✅ Image with square ratio */}
+        {/* Image */}
         <div className="md:w-1/2 bg-gray-50 p-4 flex justify-center items-center">
           <div className="w-80 aspect-square flex justify-center items-center bg-gray-100 rounded-lg overflow-hidden">
             <img
@@ -105,12 +107,13 @@ export default function ItemDetails() {
               {item.category?.charAt(0).toUpperCase() + item.category?.slice(1)}
             </p>
             <p className="text-gray-500 text-sm">
-              <span className="font-medium">Type:</span> {item.type?.charAt(0).toUpperCase() + item.type?.slice(1)}
+              <span className="font-medium">Type:</span>{" "}
+              {item.type?.charAt(0).toUpperCase() + item.type?.slice(1)}
             </p>
             <p className="text-gray-700 text-sm mt-2">{item.description}</p>
           </div>
 
-          {/* Seller */}
+          {/* Seller Info */}
           <div className="flex items-center gap-3 mt-4 bg-gray-50 p-3 rounded-lg">
             <img
               src={seller.avatar}
@@ -160,7 +163,6 @@ export default function ItemDetails() {
                 onClick={() => navigate(`/itemdetails/${rec._id}`)}
                 className="flex-shrink-0 w-48 bg-white shadow-md rounded-lg p-3 flex flex-col items-center text-center hover:shadow-lg transition-shadow snap-center cursor-pointer"
               >
-                {/* ✅ Recommendation image with square ratio */}
                 <div className="w-full aspect-square bg-gray-100 rounded mb-2 overflow-hidden flex items-center justify-center">
                   <img
                     src={rec.image}

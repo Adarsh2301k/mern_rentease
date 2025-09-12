@@ -1,13 +1,13 @@
 import { useState, useContext } from "react";
-import { addItem } from "../api";  // ✅ use API helper
+import { addItem } from "../api";  
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const CATEGORIES = ["electronics", "books", "furniture","stationery", "clothing", "other"];
+const CATEGORIES = ["electronics", "books", "furniture", "stationery", "clothing", "other"];
 const TYPES = ["new", "second-hand", "rental"];
 
 export default function AddItem() {
-  const { token } = useContext(AuthContext);   // ✅ need token in context
+  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -16,11 +16,12 @@ export default function AddItem() {
     price: "",
     category: "",
     type: "second-hand",
+    quantity: 1,   // ✅ added default quantity
     image: null,
   });
 
   const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false); // prevent multiple submits
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -42,7 +43,7 @@ export default function AddItem() {
         data.append(key, formData[key]);
       }
 
-      await addItem(data, token); // ✅ API helper with token
+      await addItem(data, token);
 
       setMessage("✅ Item added successfully!");
       setFormData({
@@ -51,10 +52,11 @@ export default function AddItem() {
         price: "",
         category: "",
         type: "second-hand",
+        quantity: 1,   // reset
         image: null,
       });
 
-      navigate("/profile"); // ✅ redirect after success
+      navigate("/profile");
     } catch (err) {
       setMessage("❌ Failed to add item. Try again.");
       console.error(err.response?.data || err.message);
@@ -65,9 +67,10 @@ export default function AddItem() {
 
   return (
     <div className="max-w-lg mx-auto mt-20 p-6 bg-white rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add a New Item</h2>
+      <h2 className="text-xl text-blue-600 font-bold mb-6 text-center">Add a New Item</h2>
       {message && <p className="mb-4 text-center text-blue-600">{message}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
+
         {/* Name */}
         <div className="flex flex-col">
           <label className="mb-1 font-medium text-sm">Name*</label>
@@ -76,7 +79,7 @@ export default function AddItem() {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+            className="w-full border border-gray-300 p-2 rounded text-sm"
             required
           />
         </div>
@@ -88,43 +91,58 @@ export default function AddItem() {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+            className="w-full border border-gray-300 p-2 rounded text-sm"
             rows={3}
           />
         </div>
 
-        {/* Price */}
-        <div className="flex flex-col">
-          <label className="mb-1 font-medium text-sm">Price*</label>
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
-            required
-          />
-        </div>
+       {/* Price & Quantity side by side ✅ */}
+<div className="flex gap-4">
+  <div className="flex-1 flex flex-col">
+    <label className="mb-1 font-medium text-sm">Price*</label>
+    <input
+      type="number"
+      name="price"
+      value={formData.price}
+      onChange={handleChange}
+      className="w-full border border-gray-300 p-2 rounded text-sm"
+      required
+    />
+  </div>
+
+  <div className="flex-1 flex flex-col">
+    <label className="mb-1 font-medium text-sm">Quantity*</label>
+    <input
+      type="number"
+      name="quantity"
+      value={formData.quantity}
+      onChange={handleChange}
+      min="1"
+      className="w-full border border-gray-300 p-2 rounded text-sm"
+      required
+    />
+  </div>
+</div>
+
 
         {/* Category & Type */}
         <div className="flex gap-4">
           <div className="flex-1 flex flex-col">
             <label className="mb-1 font-medium text-sm">Category*</label>
             <select
-  name="category"
-  value={formData.category}
-  onChange={handleChange}
-  className="w-full p-2 border rounded"
-  required
->
-  <option value="">Select Category</option>
-  {["furniture", "electronics", "books", "clothing", "stationery", "other"].map((cat) => (
-    <option key={cat} value={cat}>
-      {cat.charAt(0).toUpperCase() + cat.slice(1)}
-    </option>
-  ))}
-</select>
-
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full p-2 border rounded text-sm"
+              required
+            >
+              <option value="">Select Category</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex-1 flex flex-col">
@@ -133,7 +151,7 @@ export default function AddItem() {
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+              className="w-full border border-gray-300 p-2 rounded text-sm"
             >
               {TYPES.map((type) => (
                 <option key={type} value={type}>

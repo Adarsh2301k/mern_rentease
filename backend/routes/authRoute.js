@@ -1,7 +1,8 @@
 import express, { Router } from 'express'
-import { registerUser ,loginUser,logoutUser,getProfile,updateProfile} from '../controllers/authController.js';
+import { registerUser ,loginUser,logoutUser,getProfile,updateProfile,getAllUsersAdmin} from '../controllers/authController.js';
 import protect from '../middleware/authMiddleware.js'
 import parser from "../libs/multer.js";
+import isAdmin from '../middleware/adminMiddleware.js';
 
 
 
@@ -12,5 +13,7 @@ router.post('/login',loginUser);
 router.post('/logout',logoutUser);
 router.get('/profile',protect,getProfile);
 router.put("/updateProfile", protect, parser.single("avatar"), updateProfile);
+// admin
+router.get("/admin/users", protect, isAdmin, getAllUsersAdmin);
 
 export default router;

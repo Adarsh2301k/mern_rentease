@@ -1,23 +1,47 @@
 import React, { useContext, useState } from "react";
 import { CartContext } from "../../context/CartContext";
+import { createOrder } from "../../api.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
   const { cart, clearCart } = useContext(CartContext);
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const navigate = useNavigate();
 
   if (!cart || cart.items.length === 0) {
     return <p className="text-center py-10">Your cart is empty</p>;
   }
 
-  // calculate total
+  // ✅ calculate total
   const total = cart.items.reduce(
     (sum, ci) => sum + ci.item.price * ci.quantity,
     0
   );
 
-  const handlePlaceOrder = () => {
-    alert(`Order placed with ${paymentMethod.toUpperCase()} for ₹${total}`);
-    clearCart();
+  const handlePlaceOrder = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const orderData = {
+  items: cart.items.map((ci) => ({
+    item: ci.item._id,
+    quantity: ci.quantity,
+  })),
+  paymentMethod,
+  shippingAddress: "N/A", // optional for now
+};
+
+
+      console.log("Placing order:", orderData);
+
+      await createOrder(orderData, token);
+
+      clearCart();
+      navigate("/orders/myorders"); // 👈 after success, go to buyer orders page
+    } catch (err) {
+      console.error("Order failed:", err);
+      alert("Failed to place order. Please try again.");
+    }
   };
 
   return (
@@ -54,32 +78,22 @@ export default function Checkout() {
             <input
               type="radio"
               name="payment"
-              value="cod"
-              checked={paymentMethod === "cod"}
-              onChange={() => setPaymentMethod("cod")}
+              value="COD"
+              checked={paymentMethod === "COD"}
+              onChange={() => setPaymentMethod("COD")}
             />
             <span>Cash on Delivery</span>
           </label>
-          <label className="flex items-center gap-3">
+          {/* <label className="flex items-center gap-3">
             <input
               type="radio"
               name="payment"
-              value="upi"
-              checked={paymentMethod === "upi"}
-              onChange={() => setPaymentMethod("upi")}
+              value="online"
+              checked={paymentMethod === "online"}
+              onChange={() => setPaymentMethod("online")}
             />
-            <span>UPI / Net Banking</span>
-          </label>
-          <label className="flex items-center gap-3">
-            <input
-              type="radio"
-              name="payment"
-              value="card"
-              checked={paymentMethod === "card"}
-              onChange={() => setPaymentMethod("card")}
-            />
-            <span>Credit / Debit Card</span>
-          </label>
+            <span>UPI / Net Banking / Card</span>
+          </label> */}
         </div>
       </div>
 
@@ -88,7 +102,7 @@ export default function Checkout() {
         onClick={handlePlaceOrder}
         className="w-full border border-green-600 text-green-600 py-3 rounded text-lg font-medium hover:bg-green-500 hover:text-white transition"
       >
-        Place Order & Pay
+        Place Order & Pay on Delivery
       </button>
     </div>
   );

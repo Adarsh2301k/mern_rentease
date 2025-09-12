@@ -1,7 +1,7 @@
 // src/pages/UpdateItem.jsx
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getItemById, updateItem, deleteItem } from "../api";
+import { getItemById, updateItem, deleteItem, getItemByIdPrivate } from "../api";
 import { FiCamera } from "react-icons/fi";
 
 const CATEGORY_OPTIONS = ["furniture", "electronics", "books", "clothing", "stationery", "other"];
@@ -19,19 +19,23 @@ export default function UpdateItem() {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const { data } = await getItemById(id);
+        const token = localStorage.getItem("token");
+        const { data } = await getItemByIdPrivate(id,token);
+        
         console.log("Fetched item from API:", data);
 
         const item = data.item; // ✅ get the item object
 
         setForm({
-          name: item.name || "",
-          description: item.description || "",
-          price: item.price || "",
-          category: item.category || "",
-          type: item.type || "second-hand",
-          image: item.image || "",
-        });
+  name: data.item.name,
+  description: data.item.description,
+  price: data.item.price,
+  quantity: data.item.quantity,
+  category: data.item.category,
+  type: data.item.type,
+  image: data.item.image,
+  status: data.item.status,
+});
       } catch (err) {
         console.error("Failed to fetch item:", err);
       }
@@ -136,7 +140,7 @@ export default function UpdateItem() {
                 name="description"
                 value={form.description}
                 onChange={handleChange}
-                rows="2"
+                rows="6"
                 className="w-full border rounded-lg px-3 py-2 text-sm"
               />
             </div>
@@ -148,6 +152,16 @@ export default function UpdateItem() {
                   type="number"
                   name="price"
                   value={form.price}
+                  onChange={handleChange}
+                  className="w-full border rounded-lg px-3 py-2 text-sm"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm text-gray-600">Price</label>
+                <input
+                  type="number"
+                  name="price"
+                  value={form.quantity}
                   onChange={handleChange}
                   className="w-full border rounded-lg px-3 py-2 text-sm"
                 />

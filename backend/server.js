@@ -5,6 +5,7 @@ import cors from 'cors'
 import authRoute from './routes/authRoute.js'
 import itemRoute from './routes/itemRoute.js'
 import cartRoute from './routes/cartRoute.js'
+import orderRoutes from './routes/orderRoute.js'
 
 
 dotenv.config();
@@ -13,12 +14,14 @@ const app=express();
 
 app.use(express.json());
 
+// app.use(cors({ origin: "http://localhost:5173" , credentials: true }));
 app.use(cors({ origin: "https://rentease99.netlify.app" , credentials: true }));
 connectDB();
 
 app.use("/api/auth", authRoute);
 app.use("/api/items", itemRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/orders", orderRoutes);
 const PORT=process.env.PORT || 4000;
 
 app.listen(PORT,()=>{

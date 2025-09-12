@@ -37,19 +37,19 @@ function Navbar() {
             to="/items"
             className="text-gray-700 hover:text-blue-600 font-medium"
           >
-            All items
+            AllItems
           </Link>
           
           <Link
             to="/cart"
             className="text-gray-700 hover:text-blue-600 font-medium"
           >
-            View Cart
+            ViewCart
           </Link><Link
-            to="/about"
+            to="/orders/myorders"
             className="text-gray-700 hover:text-blue-600 font-medium"
           >
-            About Us
+            MyOrders
           </Link>
 
           {/* Profile Dropdown */}
@@ -70,6 +70,12 @@ function Navbar() {
                   className="block px-4 py-2 text-gray-700 hover:bg-blue-50"
                 >
                   My Profile
+                </Link>
+                <Link
+                  to="/about"
+                  className="block px-4 py-2 text-gray-700 hover:bg-blue-50"
+                >
+                  About Us
                 </Link>
                 
                 <button
@@ -105,6 +111,7 @@ function Navbar() {
         >
           {isOpen ? <FaTimes /> : <FaBars />}
         </button>
+        
       </div>
 
       {/* Mobile Dropdown */}
@@ -124,13 +131,7 @@ function Navbar() {
           >
             All items
           </Link>
-          <Link
-            to="/about"
-            className="block text-gray-700 hover:text-blue-600 font-medium"
-            onClick={() => setIsOpen(false)}
-          >
-            About Us
-          </Link>
+         
 
           {!isLoggedIn ? (
             <>
@@ -152,19 +153,20 @@ function Navbar() {
           ) : (
             <>
               <Link
+                to="/orders/myorders"
+                className="block text-gray-700 hover:text-blue-600 font-medium"
+                onClick={() => setIsOpen(false)}
+              >
+                My Orders
+              </Link>
+              <Link
                 to="/profile"
                 className="block text-gray-700 hover:text-blue-600 font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 My Profile
               </Link>
-              <Link
-                to="/updateProfile"
-                className="block text-gray-700 hover:text-blue-600 font-medium"
-                onClick={() => setIsOpen(false)}
-              >
-                Update Profile
-              </Link>
+              
               <button
                 onClick={handleLogout}
                 className="block text-gray-700 hover:text-red-600 font-medium"
@@ -173,6 +175,13 @@ function Navbar() {
               </button>
             </>
           )}
+           <Link
+            to="/about"
+            className="block text-gray-700 hover:text-blue-600 font-medium"
+            onClick={() => setIsOpen(false)}
+          >
+            About Us
+          </Link>
         </div>
       )}
     </nav>

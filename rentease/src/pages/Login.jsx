@@ -22,7 +22,7 @@ const Login = () => {
          alert(err.response?.data?.message || "Login failed");
     }
     // 🔹 For now, just console log (no backend call yet)
-    console.log("Login attempted with:", { email, password });
+    // console.log("Login attempted with:", { email, password });
   };
 
   return (
